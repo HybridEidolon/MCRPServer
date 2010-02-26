@@ -1,0 +1,7 @@
+# folders
+build/*
+dist/*
+nbproject/private/*
+
+# files
+minecraft-server.jar
