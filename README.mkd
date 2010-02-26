@@ -27,6 +27,37 @@ Building
 Simply open the project and _Clean & Build_ it in NetBeans. Alternatively, you
 can just use the included ant build script.
 
+Configuring
+-----------
+
+First, you will need to insert `minecraft-server.jar` in to the `lib/` folder of
+the package.  We are not legally allowed to distribute this, however it may be
+downloaded freely from [the official Minecraft site](http://minecraft.net
+"Minecraft").
+
+Second, you will need a `server_level.dat` as this server will not automatically
+generate one.  We strongly reccommend using [Omen](http://omened.tumblr.com
+"Omen") to create a world just to your needs.
+
+The server will create a configuration file called `mcrp.conf` on first run.
+You can configure the server by modifying the properties here.
+
+To use the server, you will need a MySQL database to store local user data, such
+as characters and admin status.  The properties for these are:
+
+ * `database.host` - The (remote) host of the MySQL server.
+ * `database.port` - The port to communicate to the MySQL server on.
+ * `database.name` - The database to use.
+ * `database.user` - The username to use when logging in to the MySQL server.
+ * `database.pass` - The password to use when logging in to the MySQL server.
+
+There are other properties that can be configured at your leisure.  Most have
+fairly self-explanatory names, so experiment and see what you like.
+
+To setup the database, use the SQL dump located in the `sql` folder of the
+source tree.  Run this on an empty database and it will build the schema for a
+clean, unmodified world.
+
 Contributing
 ------------
 

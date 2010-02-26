@@ -78,7 +78,10 @@ public class Main {
             // Generate a default config
             log(LogLevel.MINIMAL, "jbnet2d.conf not found, generating...");
             config.setProperty("network.port", "25565");
+            config.setProperty("server.name", "Default MCRP Server");
+            config.setProperty("server.public", "0");
             config.setProperty("log.level", "1"); // Error
+            config.setProperty("database.host", "localhost");
             config.setProperty("database.user", "root");
             config.setProperty("database.password", "mcrp");
             config.setProperty("database.name", "mcrp");
