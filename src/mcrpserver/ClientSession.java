@@ -20,7 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import mcrpserver.packet.Packet;
+import mcrpserver.packet.*;
 
 /**
  *
@@ -66,7 +66,13 @@ public class ClientSession extends Thread {
             try {
                 // parse incoming packet
                 if ((value = sockIn.read(bfr)) > -1) {
-                    // TODO: parse incoming packet
+                    Packet pkt = getPacket(bfr);
+                    if (pkt.getID() == OpCode.CLIENT_PLAYER_IDENT) {
+                        // TODO: verify user
+                    }
+                    if (pkt.getID() == OpCode.CLIENT_MESSAGE) {
+                        // TODO: parse commands if any
+                    }
                 } else {
                     running = false;
                     break;
@@ -81,8 +87,16 @@ public class ClientSession extends Thread {
                 + sock.getInetAddress().toString() + " disconnected");
     }
 
-    public Packet parse() {
+    public Packet getPacket(byte[] bfr) {
+        int id = (int)bfr[0];
+        Packet returnvalue = null;
 
-        return null;
+        if (id == OpCode.CLIENT_PLAYER_IDENT.id) {
+            returnvalue = new ClientPlayerIdent(bfr);
+        }
+        if (id == OpCode.CLIENT_MESSAGE.id) {
+            returnvalue = new ClientMessage(bfr);
+        }
+        return returnvalue;
     }
 }
