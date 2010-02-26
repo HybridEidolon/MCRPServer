@@ -1,7 +1,7 @@
-jbnet2d
-=======
+MCRPServer
+==========
 
-An emulator for Battle.net 2.0, written with NetBeans in Java.
+A custom Minecraft server with extended functionality, such as RPG mechanics.
 
 License
 -------
