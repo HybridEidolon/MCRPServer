@@ -29,6 +29,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
@@ -46,6 +47,8 @@ public class Main {
     public static Properties config;
     private static boolean running = true;
     private static com.mojang.minecraft.level.Level level = null;
+    private static ArrayList<ClientSession> clients;
+    private static int clientIncrement;
 
     public static synchronized void log(LogLevel level, String text) {
         Calendar time = Calendar.getInstance();
@@ -112,6 +115,10 @@ public class Main {
                 Socket sock = servSock.accept();
 
                 // TODO: verify with login server for authenticity
+
+                ClientSession cls = new ClientSession(sock, "client"
+                        + clientIncrement);
+                clientIncrement++;
             } catch (SocketException ex) {
             } catch (IOException ex) {
                 Main.log(LogLevel.ERROR, "Client accept failed: "

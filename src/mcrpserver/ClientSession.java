@@ -14,10 +14,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package mcrpserver;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.net.Socket;
+import mcrpserver.packet.Packet;
 
 /**
  *
@@ -28,6 +31,9 @@ public class ClientSession extends Thread {
     private Socket sock;
     private String username;
     private String passhash;
+    private boolean running = true;
+    private BufferedInputStream sockIn;
+    private BufferedOutputStream sockOut;
 
     public ClientSession(Socket sock, String name) {
         this.sock = sock;
@@ -41,5 +47,42 @@ public class ClientSession extends Thread {
             Main.log(LogLevel.ERROR, getName() + ": Bad socket, stopping");
             return;
         }
+
+        Main.log(LogLevel.VERBOSE, getName() + ": "
+                + sock.getInetAddress().toString() + " connected");
+
+        try {
+            sockIn = new BufferedInputStream(sock.getInputStream());
+            sockOut = new BufferedOutputStream(sock.getOutputStream());
+        } catch (IOException ex) {
+            Main.log(LogLevel.ERROR, getName() + ": IOException setting up "
+                    + "streams: " + ex.getMessage());
+        }
+
+        // enter infinite loop
+        byte[] bfr = new byte[2048];
+        int value = 0;
+        while (running) {
+            try {
+                // parse incoming packet
+                if ((value = sockIn.read(bfr)) > -1) {
+                    // TODO: parse incoming packet
+                } else {
+                    running = false;
+                    break;
+                }
+            } catch (IOException ex) {
+                Main.log(LogLevel.ERROR, getName() + ": socket fail: "
+                        + ex.getMessage());
+            }
+        }
+
+        Main.log(LogLevel.VERBOSE, getName() + ": "
+                + sock.getInetAddress().toString() + " disconnected");
+    }
+
+    public Packet parse() {
+
+        return null;
     }
 }
