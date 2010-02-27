@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package mcrpserver.packet;
 
 import java.nio.ByteBuffer;
@@ -26,39 +25,38 @@ import java.util.Arrays;
  *
  * @author Furyhunter
  */
-public class ClientPlayerIdent extends Packet {
+public class ServerMessage extends Packet {
 
-    private byte version;
-    private String username;
-    private String verificationkey;
-    private byte unused;
+    private byte playerid;
+    private String message;
 
-    public ClientPlayerIdent(byte[] bfr) {
-        super(bfr);
-        ByteBuffer pkt = ByteBuffer.wrap(bfr);
-
-        this.version = pkt.get();
-        byte[] strbfr = new byte[64];
-        pkt.get(strbfr);
-        username = new String(strbfr);
-        pkt.get(strbfr);
-        verificationkey = new String(strbfr);
-        unused = pkt.get();
+    public ServerMessage(byte playerid, String message) {
+        this.id = OpCode.SERVER_MESSAGE;
+        this.playerid = playerid;
+        this.message = message.substring(0,63);
     }
 
-    public byte getVersion() {
-        return version;
-    }
+    @Override
+    public byte[] build() {
+        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        pkt.order(ByteOrder.BIG_ENDIAN);
 
-    public String getUsername() {
-        return username;
-    }
+        // insert id
+        pkt.put((byte)id.id);
 
-    public String getVerificationKey() {
-        return verificationkey;
-    }
+        // insert playerid
+        pkt.put(playerid);
 
-    public byte getUnused() {
-        return unused;
+        // insert message
+        byte[] msg = message.getBytes(Charset.forName("US-ASCII"));
+        int filler = 64-msg.length;
+        pkt.put(msg);
+        byte[] fill = new byte[filler];
+        Arrays.fill(fill, (byte)0x20);
+        pkt.put(fill);
+
+        pkt.put((byte)0x0A);
+
+        return pkt.array();
     }
 }

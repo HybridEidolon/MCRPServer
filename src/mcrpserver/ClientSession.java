@@ -20,6 +20,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mcrpserver.packet.*;
 
 /**
@@ -34,6 +37,8 @@ public class ClientSession extends Thread {
     private boolean running = true;
     private BufferedInputStream sockIn;
     private BufferedOutputStream sockOut;
+    private User user;
+    private boolean[] playeridslist = new boolean[256];
 
     public ClientSession(Socket sock, String name) {
         this.sock = sock;
@@ -67,16 +72,43 @@ public class ClientSession extends Thread {
                 // parse incoming packet
                 if ((value = sockIn.read(bfr)) > -1) {
                     Packet pkt = getPacket(bfr);
-                    if (pkt.getID() == OpCode.CLIENT_PLAYER_IDENT) {
-                        // TODO: verify user
+
+                    if (pkt instanceof ClientPlayerIdent) {
+                        ClientPlayerIdent pkt2 = (ClientPlayerIdent) pkt;
+                        int i;
+                        // find unused player id
+                        for (i = 0; i < 256; i++) {
+                            if (!playeridslist[i]) {
+                                break;
+                            }
+                        }
+
+                        // tell other players of their existance
+                        user = new User((byte) i, pkt2.getUsername(),
+                                pkt2.getVerificationKey());
+                        if (!user.verify()) {
+                            // TODO: disconnect the user
+                            running = false;
+                            break;
+                        } else {
+                            sendServerIdent(user.getID(),
+                                    MCRPServer.config.getProperty("server.name",
+                                    "default"),
+                                    user.getVerificationKey(),user.getType());
+                        }
                     }
-                    if (pkt.getID() == OpCode.CLIENT_MESSAGE) {
-                        // TODO: parse commands if any
+
+                    if (pkt instanceof ClientMessage) {
+                        ClientMessage pkt2 = (ClientMessage)pkt;
+
+                        MCRPServer.broadcastMessage(user.getID(),
+                                pkt2.getMessage());
                     }
                 } else {
                     running = false;
                     break;
                 }
+            } catch (SocketException ex) {
             } catch (IOException ex) {
                 MCRPServer.log(LogLevel.ERROR, getName() + ": socket fail: "
                         + ex.getMessage());
@@ -85,10 +117,21 @@ public class ClientSession extends Thread {
 
         MCRPServer.log(LogLevel.VERBOSE, getName() + ": "
                 + sock.getInetAddress().toString() + " disconnected");
+        end();
     }
 
-    public Packet getPacket(byte[] bfr) {
-        int id = (int)bfr[0];
+    public synchronized void end() {
+        try {
+            sock.close();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed IOException "
+                    + "on end(): " + ex.getMessage());
+        }
+        playeridslist[user.getID()] = false;
+    }
+
+    public static Packet getPacket(byte[] bfr) {
+        int id = (int) bfr[0];
         Packet returnvalue = null;
 
         if (id == OpCode.CLIENT_PLAYER_IDENT.id) {
@@ -98,5 +141,39 @@ public class ClientSession extends Thread {
             returnvalue = new ClientMessage(bfr);
         }
         return returnvalue;
+    }
+
+    /* BEGIN PACKET SEND METHODS */
+    /**
+     * Sends a chat message to the socket.
+     * @param playerid the playerid to send it to, or 0 for server message
+     * @param message the message to be sent, max 64 characters
+     */
+    public synchronized void sendServerMessage(byte playerid, String message) {
+        // create packet
+        ServerMessage pkt = new ServerMessage(playerid, message);
+
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerMessage: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerIdent(byte playerid, String servername,
+            String servermotd, byte playertype) {
+        ServerIdent pkt = new ServerIdent(playerid, servername, servermotd,
+                playertype);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerIdent: " + ex.getMessage());
+        }
     }
 }

@@ -79,6 +79,7 @@ public class MCRPServer {
             log(LogLevel.MINIMAL, "jbnet2d.conf not found, generating...");
             config.setProperty("network.port", "25565");
             config.setProperty("server.name", "Default MCRP Server");
+            config.setProperty("server.motd", "Default MOTD");
             config.setProperty("server.public", "0");
             config.setProperty("log.level", "1"); // Error
             config.setProperty("database.host", "localhost");
@@ -109,7 +110,7 @@ public class MCRPServer {
                 + "." + MCRPServer.VERSION_MINOR);
 
         MCRPServer.log(LogLevel.MINIMAL, "Loading level server_level.dat");
-        // TODO: load map
+        MCRPServer.loadLevel("server_level.dat");
 
         MCRPServer.log(LogLevel.MINIMAL, "Starting server");
         while (running) {
@@ -170,7 +171,7 @@ public class MCRPServer {
             return false;
         } catch (ClassNotFoundException ex) {
             MCRPServer.log(LogLevel.ERROR, "minecraft_server.jar is not in the"
-                    + "running dir.");
+                    + "lib dir.");
             end();
             return false;
         }
@@ -200,5 +201,22 @@ public class MCRPServer {
                     + ex.getMessage());
         }
         return true;
+    }
+
+    public static synchronized void broadcastMessage(byte user,
+            String message) {
+        // iterate every clientsession
+        for (ClientSession i : clients) {
+            i.sendServerMessage(user, message);
+        }
+    }
+
+    public static synchronized void killClient(ClientSession cls) {
+        for (ClientSession i : clients) {
+            if (i==cls) {
+                cls.end();
+                clients.remove(i);
+            }
+        }
     }
 }

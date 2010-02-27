@@ -4,5 +4,5 @@ dist/*
 nbproject/private/*
 
 # files
-minecraft-server.jar
+mcrp.conf
 lib/minecraft-server.jar

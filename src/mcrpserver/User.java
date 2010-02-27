@@ -14,35 +14,45 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package mcrpserver.packet;
 
-import java.nio.ByteBuffer;
+package mcrpserver;
 
 /**
  *
  * @author Furyhunter
  */
-public class ClientMessage extends Packet {
+public class User {
 
-    private byte unused; // Unused byte in the packet...
-    private String message; // Message
+    private byte id;
+    private String username;
+    private String verificationkey;
+    private byte type;
 
-    public ClientMessage(byte[] bfr) {
-        super(bfr);
-        ByteBuffer pkt = ByteBuffer.wrap(bfr);
-
-        pkt.get();
-        unused = pkt.get();
-        byte[] strbfr = new byte[64];
-        pkt.get(strbfr);
-        message = new String(strbfr);
+    public User(byte id, String username, String verificationkey) {
+        this.id = id;
+        this.username = username;
+        this.verificationkey = verificationkey;
+        this.type = 0x00;
     }
 
-    public byte getUnused() {
-        return unused;
+    public byte getID() {
+        return id;
     }
 
-    public String getMessage() {
-        return message;
+    public String getUsername() {
+        return username;
+    }
+
+    public String getVerificationKey() {
+        return verificationkey;
+    }
+
+    public byte getType() {
+        return type;
+    }
+
+    public boolean verify() {
+        // TODO: verify with minecraft server
+        return true;
     }
 }
