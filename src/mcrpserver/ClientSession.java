@@ -96,7 +96,7 @@ public class ClientSession extends Thread {
                                     MCRPServer.config.getProperty("server.motd",
                                     "default"),user.getType());
                             // send the map
-                            new MapSendThread(this);
+                            new LevelSendThread(this);
                         }
                     }
 

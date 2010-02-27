@@ -27,11 +27,11 @@ import java.util.zip.GZIPOutputStream;
  *
  * @author Furyhunter
  */
-public class MapSendThread extends Thread {
+public class LevelSendThread extends Thread {
 
     private ClientSession cls;
 
-    public MapSendThread(ClientSession cls) {
+    public LevelSendThread(ClientSession cls) {
         this.cls = cls;
         this.start();
     }
