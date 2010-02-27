@@ -49,6 +49,7 @@ public class MCRPServer {
     public static com.mojang.minecraft.level.Level level = null;
     private static ArrayList<ClientSession> clients;
     private static int clientIncrement;
+    public static LevelTickThread leveltick;
 
     public static synchronized void log(LogLevel level, String text) {
         Calendar time = Calendar.getInstance();
@@ -115,6 +116,7 @@ public class MCRPServer {
         if (!MCRPServer.loadLevel("server_level.dat")) {
             return;
         }
+        leveltick = new LevelTickThread();
 
         MCRPServer.log(LogLevel.MINIMAL, "Starting server");
         try {

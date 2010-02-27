@@ -40,8 +40,10 @@ public class LevelSendThread extends Thread {
     public void run() {
         // send the client the init
         cls.sendServerLevelInitialize();
+        MCRPServer.log(LogLevel.DEBUG, "Sent level init");
 
         // send the level
+        MCRPServer.log(LogLevel.DEBUG, "Sending level");
         byte[] level;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -49,9 +51,9 @@ public class LevelSendThread extends Thread {
             DataOutputStream out = new DataOutputStream(gzos);
             out.writeInt(MCRPServer.level.blocks.length);
             out.write(MCRPServer.level.blocks);
+            out.flush();
             gzos.close();
             out.close();
-            baos.flush();
             level = baos.toByteArray();
             baos.close();
         } catch (IOException ex) {
@@ -63,23 +65,23 @@ public class LevelSendThread extends Thread {
         try {
             while (!done) {
                 chunks.add(num,Arrays.copyOfRange(level, 1024*num,
-                        1024*(num+1)));
+                        (1024*(num+1))-1));
                 num++;
             }
         } catch (ArrayIndexOutOfBoundsException ex) {
             done = true;
         }
 
-        byte pct = 0x00;
         int pos = 0;
         try {
-            for (int i=0; !chunks.isEmpty(); i++) {
+            for (int i=0; pos<=num; i++) {
                 if (chunks.get(i) != null) {
                     byte[] chunk = chunks.get(i);
                     pos++;
-                    pct = (byte) ((byte) (pos/num) * 100);
-                    if (pct > 100) { pct = 100; }
-                    cls.sendServerLevelDataChunk((short)chunk.length, chunk, pct);
+                    MCRPServer.log(LogLevel.DEBUG, "Send chunk: "
+                            + (pos/num)*100 + "%");
+                    cls.sendServerLevelDataChunk((short)chunk.length, chunk,
+                            (byte)Math.round((pos/num)*100));
                     chunks.remove(i);
                 }
             }
@@ -89,11 +91,13 @@ public class LevelSendThread extends Thread {
         // send finalize
         cls.sendServerLevelFinalize((short)MCRPServer.level.width,
                 (short)MCRPServer.level.height, (short)MCRPServer.level.depth);
+        MCRPServer.log(LogLevel.DEBUG, "Sent finalize");
 
         // send spawn
         cls.sendServerPlayerSpawn(cls.user.getID(), cls.user.getUsername(),
                 (short)MCRPServer.level.xSpawn, (short)MCRPServer.level.ySpawn,
                 (short)MCRPServer.level.zSpawn, (byte)MCRPServer.level.rotSpawn,
                 (byte)0);
+        MCRPServer.log(LogLevel.DEBUG, "Player spawned");
     }
 }
