@@ -26,19 +26,19 @@ import java.nio.ByteOrder;
 public class ServerPlayerPositionOrient extends Packet {
 
     private byte playerid;
-    private short xpos;
-    private short ypos;
-    private short zpos;
+    private byte xdelta;
+    private byte ydelta;
+    private byte zdelta;
     private byte heading;
     private byte pitch;
 
-    public ServerPlayerPositionOrient(byte playerid, short x, short y, short z,
+    public ServerPlayerPositionOrient(byte playerid, byte x, byte y, byte z,
             byte heading, byte pitch) {
         this.id = OpCode.SERVER_PLAYER_POSITIONORIENT;
         this.playerid = playerid;
-        this.xpos = x;
-        this.ypos = y;
-        this.zpos = z;
+        this.xdelta = x;
+        this.ydelta = y;
+        this.zdelta = z;
         this.heading = heading;
         this.pitch = pitch;
     }
@@ -55,9 +55,9 @@ public class ServerPlayerPositionOrient extends Packet {
         pkt.put(playerid);
 
         // put x y z
-        pkt.putShort(xpos);
-        pkt.putShort(ypos);
-        pkt.putShort(zpos);
+        pkt.put(xdelta);
+        pkt.put(ydelta);
+        pkt.put(zdelta);
 
         // put heading, pitch
         pkt.put(heading);

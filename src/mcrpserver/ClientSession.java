@@ -183,4 +183,162 @@ public class ClientSession extends Thread {
                     + "ServerIdent: " + ex.getMessage());
         }
     }
+
+    /**
+     * Sends a ping to the socket.
+     */
+    public synchronized void sendServerPing() {
+        try {
+            sockOut.write(new ServerPing().build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerPing: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Sends the level initialize notice to the socket.
+     */
+    public synchronized void sendServerLevelInitialize() {
+        try {
+            sockOut.write(new ServerLevelInitialize().build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerLevelInitialize: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerLevelDataChunk(short length, byte[] data,
+            byte pct) {
+        ServerLevelDataChunk pkt = new ServerLevelDataChunk(length, data,
+                pct);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerLevelDataChunk: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerLevelFinalize(short x, short y,
+            short z) {
+        ServerLevelFinalize pkt = new ServerLevelFinalize(x, y, z);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerLevelFinalize: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerSetBlock(short x, short y, short z,
+            byte type) {
+        ServerSetBlock pkt = new ServerSetBlock(x, y, z, type);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerSetBlock: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerPlayerSpawn(byte plrid, String name,
+            short x, short y, short z, byte heading, byte pitch) {
+        ServerPlayerSpawn pkt = new ServerPlayerSpawn(plrid, name, x, y, z,
+                heading, pitch);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerPlayerSpawn: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerPlayerTeleport(byte plrid, short x,
+            short y, short z, byte heading, byte pitch) {
+        ServerPlayerTeleport pkt = new ServerPlayerTeleport(plrid, x, y, z,
+                heading, pitch);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerPlayerTeleport: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerPlayerPositionOrient(byte plrid, byte x,
+            byte y, byte z, byte heading, byte pitch) {
+        ServerPlayerPositionOrient pkt = new ServerPlayerPositionOrient(plrid,
+                x, y, z, heading, pitch);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerPlayerPositionOrient: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerPlayerPosition(byte plrid, byte x,
+            byte y, byte z) {
+        ServerPlayerPosition pkt = new ServerPlayerPosition(plrid, x, y, z);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerPlayerPosition: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerPlayerOrient(byte plrid, byte heading,
+            byte pitch) {
+        ServerPlayerOrient pkt = new ServerPlayerOrient(plrid, heading, pitch);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerPlayerOrient: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerPlayerDespawn(byte plrid) {
+        ServerPlayerDespawn pkt = new ServerPlayerDespawn(plrid);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerPlayerDespawn: " + ex.getMessage());
+        }
+    }
+
+    public synchronized void sendServerPlayerDisconnect(String reason) {
+        ServerPlayerDisconnect pkt = new ServerPlayerDisconnect(reason);
+        try {
+            // send it
+            sockOut.write(pkt.build());
+            sockOut.flush();
+        } catch (IOException ex) {
+            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+                    + "ServerPlayerDisconnect: " + ex.getMessage());
+        }
+    }
 }

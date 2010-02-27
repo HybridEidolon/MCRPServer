@@ -26,14 +26,14 @@ import java.nio.ByteOrder;
 public class ServerPlayerOrient extends Packet {
 
     private byte playerid;
-    private byte heading;
-    private byte pitch;
+    private byte headingdelta;
+    private byte pitchdelta;
 
     public ServerPlayerOrient(byte playerid, byte heading, byte pitch) {
         this.id = OpCode.SERVER_PLAYER_ORIENT;
         this.playerid = playerid;
-        this.heading = heading;
-        this.pitch = pitch;
+        this.headingdelta = heading;
+        this.pitchdelta = pitch;
     }
 
     @Override
@@ -48,8 +48,8 @@ public class ServerPlayerOrient extends Packet {
         pkt.put(playerid);
 
         // put heading, pitch
-        pkt.put(heading);
-        pkt.put(pitch);
+        pkt.put(headingdelta);
+        pkt.put(pitchdelta);
 
         pkt.put((byte) 0x0A);
 

@@ -26,16 +26,16 @@ import java.nio.ByteOrder;
 public class ServerPlayerPosition extends Packet {
 
     private byte playerid;
-    private short xpos;
-    private short ypos;
-    private short zpos;
+    private byte xdelta;
+    private byte ydelta;
+    private byte zdelta;
 
-    public ServerPlayerPosition(byte playerid, short x, short y, short z) {
+    public ServerPlayerPosition(byte playerid, byte x, byte y, byte z) {
         this.id = OpCode.SERVER_PLAYER_POSITION;
         this.playerid = playerid;
-        this.xpos = x;
-        this.ypos = y;
-        this.zpos = z;
+        this.xdelta = x;
+        this.ydelta = y;
+        this.zdelta = z;
     }
 
     @Override
@@ -50,9 +50,9 @@ public class ServerPlayerPosition extends Packet {
         pkt.put(playerid);
 
         // put x y z
-        pkt.putShort(xpos);
-        pkt.putShort(ypos);
-        pkt.putShort(zpos);
+        pkt.put(xdelta);
+        pkt.put(ydelta);
+        pkt.put(zdelta);
 
         pkt.put((byte) 0x0A);
 
