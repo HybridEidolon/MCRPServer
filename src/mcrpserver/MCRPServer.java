@@ -126,6 +126,7 @@ public class MCRPServer {
                     + ex.getMessage());
             return;
         }
+        clients = new ArrayList<ClientSession>();
         while (running) {
             try {
                 // Accept client connection
