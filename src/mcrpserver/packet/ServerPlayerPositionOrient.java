@@ -18,28 +18,24 @@ package mcrpserver.packet;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 
 /**
  *
  * @author Furyhunter
  */
-public class ServerPlayerSpawn extends Packet {
+public class ServerPlayerPositionOrient extends Packet {
 
     private byte playerid;
-    private String playername;
     private short xpos;
     private short ypos;
     private short zpos;
     private byte heading;
     private byte pitch;
 
-    public ServerPlayerSpawn(byte playerid, String playername, short x,
-            short y, short z, byte heading, byte pitch) {
-        this.id = OpCode.SERVER_PLAYER_SPAWN;
+    public ServerPlayerPositionOrient(byte playerid, short x, short y, short z,
+            byte heading, byte pitch) {
+        this.id = OpCode.SERVER_PLAYER_POSITIONORIENT;
         this.playerid = playerid;
-        this.playername = playername;
         this.xpos = x;
         this.ypos = y;
         this.zpos = z;
@@ -53,23 +49,10 @@ public class ServerPlayerSpawn extends Packet {
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
-        pkt.put((byte)id.id);
+        pkt.put((byte) id.id);
 
         // put player id
         pkt.put(playerid);
-
-        // put player name
-        byte[] msg;
-        try {
-            msg = playername.substring(0,63)
-                    .getBytes(Charset.forName("US-ASCII"));
-        } catch (StringIndexOutOfBoundsException ex) {
-            msg = playername.getBytes(Charset.forName("US-ASCII"));
-        }
-        byte[] fill = new byte[64-msg.length];
-        Arrays.fill(fill, (byte)0x20);
-        pkt.put(msg);
-        pkt.put(fill);
 
         // put x y z
         pkt.putShort(xpos);
@@ -80,7 +63,7 @@ public class ServerPlayerSpawn extends Packet {
         pkt.put(heading);
         pkt.put(pitch);
 
-        pkt.put((byte)0x0A);
+        pkt.put((byte) 0x0A);
 
         return pkt.array();
     }

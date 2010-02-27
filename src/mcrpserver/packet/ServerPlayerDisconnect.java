@@ -25,62 +25,34 @@ import java.util.Arrays;
  *
  * @author Furyhunter
  */
-public class ServerPlayerSpawn extends Packet {
+public class ServerPlayerDisconnect extends Packet {
 
-    private byte playerid;
-    private String playername;
-    private short xpos;
-    private short ypos;
-    private short zpos;
-    private byte heading;
-    private byte pitch;
+    private String reason;
 
-    public ServerPlayerSpawn(byte playerid, String playername, short x,
-            short y, short z, byte heading, byte pitch) {
-        this.id = OpCode.SERVER_PLAYER_SPAWN;
-        this.playerid = playerid;
-        this.playername = playername;
-        this.xpos = x;
-        this.ypos = y;
-        this.zpos = z;
-        this.heading = heading;
-        this.pitch = pitch;
+    public ServerPlayerDisconnect(String reason) {
+        this.id = OpCode.SERVER_PLAYER_DISCONNECT;
+        this.reason = reason;
     }
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        ByteBuffer pkt = ByteBuffer.allocate(66);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
         pkt.put((byte)id.id);
 
-        // put player id
-        pkt.put(playerid);
-
-        // put player name
+        // put reason
         byte[] msg;
         try {
-            msg = playername.substring(0,63)
-                    .getBytes(Charset.forName("US-ASCII"));
+            msg = reason.substring(0, 63).getBytes(Charset.forName("US-ASCII"));
         } catch (StringIndexOutOfBoundsException ex) {
-            msg = playername.getBytes(Charset.forName("US-ASCII"));
+            msg = reason.getBytes(Charset.forName("US-ASCII"));
         }
         byte[] fill = new byte[64-msg.length];
         Arrays.fill(fill, (byte)0x20);
-        pkt.put(msg);
-        pkt.put(fill);
 
-        // put x y z
-        pkt.putShort(xpos);
-        pkt.putShort(ypos);
-        pkt.putShort(zpos);
-
-        // put heading, pitch
-        pkt.put(heading);
-        pkt.put(pitch);
-
-        pkt.put((byte)0x0A);
+        pkt.put((byte) 0x0A);
 
         return pkt.array();
     }
