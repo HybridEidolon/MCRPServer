@@ -114,7 +114,9 @@ public class MCRPServer {
         MCRPServer.loadConfig();
 
         MCRPServer.log(LogLevel.MINIMAL, "Loading level server_level.dat");
-        MCRPServer.loadLevel("server_level.dat");
+        if (!MCRPServer.loadLevel("server_level.dat")) {
+            return;
+        }
 
         MCRPServer.log(LogLevel.MINIMAL, "Starting server");
         try {
