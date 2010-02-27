@@ -21,8 +21,6 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mcrpserver.packet.*;
 
 /**
@@ -43,6 +41,7 @@ public class ClientSession extends Thread {
     public ClientSession(Socket sock, String name) {
         this.sock = sock;
         this.setName(name);
+        this.start();
     }
 
     @Override

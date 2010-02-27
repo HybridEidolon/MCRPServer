@@ -130,12 +130,9 @@ public class MCRPServer {
             try {
                 // Accept client connection
                 Socket sock = servSock.accept();
-
-                ClientSession cls = new ClientSession(sock, "client"
-                        + clientIncrement);
+                clients.add(new ClientSession(sock, "client"
+                        + clientIncrement));
                 clientIncrement++;
-                clients.add(cls);
-                cls.run();
             } catch (SocketException ex) {
             } catch (IOException ex) {
                 MCRPServer.log(LogLevel.ERROR, "Client accept failed: "
