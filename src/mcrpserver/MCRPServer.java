@@ -39,7 +39,7 @@ import java.util.zip.GZIPOutputStream;
  * The main class for MCRPServer.
  * @author Furyhunter
  */
-public class Main {
+public class MCRPServer {
 
     public static final int VERSION_MAJOR = 0;
     public static final int VERSION_MINOR = 1;
@@ -105,13 +105,13 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Main.log(LogLevel.MINIMAL, "MCRPServer version " + Main.VERSION_MAJOR
-                + "." + Main.VERSION_MINOR);
+        MCRPServer.log(LogLevel.MINIMAL, "MCRPServer version " + MCRPServer.VERSION_MAJOR
+                + "." + MCRPServer.VERSION_MINOR);
 
-        Main.log(LogLevel.MINIMAL, "Loading level server_level.dat");
+        MCRPServer.log(LogLevel.MINIMAL, "Loading level server_level.dat");
         // TODO: load map
 
-        Main.log(LogLevel.MINIMAL, "Starting server");
+        MCRPServer.log(LogLevel.MINIMAL, "Starting server");
         while (running) {
             try {
                 // Accept client connection
@@ -124,11 +124,11 @@ public class Main {
                 cls.run();
             } catch (SocketException ex) {
             } catch (IOException ex) {
-                Main.log(LogLevel.ERROR, "Client accept failed: "
+                MCRPServer.log(LogLevel.ERROR, "Client accept failed: "
                         + ex.getMessage());
             }
         }
-        Main.log(LogLevel.MINIMAL, "Server ending.");
+        MCRPServer.log(LogLevel.MINIMAL, "Server ending.");
     }
 
     public static synchronized void end() {
@@ -136,7 +136,7 @@ public class Main {
             // Thread-safe cleanup
             servSock.close();
         } catch (IOException ex) {
-            Main.log(LogLevel.ERROR, "Failed to close socket: "
+            MCRPServer.log(LogLevel.ERROR, "Failed to close socket: "
                     + ex.getMessage());
         }
     }
@@ -152,24 +152,24 @@ public class Main {
             gzis = new GZIPInputStream(fis);
             inputstream = new DataInputStream(gzis);
             if (inputstream.readInt() != 0x271bb788) {
-                Main.log(LogLevel.ERROR, "Level magic number invalid");
+                MCRPServer.log(LogLevel.ERROR, "Level magic number invalid");
                 return false;
             }
             if (inputstream.readByte() > 2) {
-                Main.log(LogLevel.ERROR, "Level version > 2, failed to load");
+                MCRPServer.log(LogLevel.ERROR, "Level version > 2, failed to load");
                 return false;
             }
             in = new ObjectInputStream(gzis);
             level = (com.mojang.minecraft.level.Level) in.readObject();
         } catch (FileNotFoundException ex) {
-            Main.log(LogLevel.ERROR, "Map file '" + file + "' not found");
+            MCRPServer.log(LogLevel.ERROR, "Map file '" + file + "' not found");
             return false;
         } catch (IOException ex) {
-            Main.log(LogLevel.ERROR, "IOException reading map: "
+            MCRPServer.log(LogLevel.ERROR, "IOException reading map: "
                     + ex.getMessage());
             return false;
         } catch (ClassNotFoundException ex) {
-            Main.log(LogLevel.ERROR, "minecraft_server.jar is not in the"
+            MCRPServer.log(LogLevel.ERROR, "minecraft_server.jar is not in the"
                     + "running dir.");
             end();
             return false;
@@ -196,7 +196,7 @@ public class Main {
             outputstream.close();
             out.close();
         } catch(IOException ex) {
-            Main.log(LogLevel.ERROR, "IOException saving map: "
+            MCRPServer.log(LogLevel.ERROR, "IOException saving map: "
                     + ex.getMessage());
         }
         return true;

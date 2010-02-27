@@ -44,18 +44,18 @@ public class ClientSession extends Thread {
     public void run() {
         // check properties
         if (sock == null) {
-            Main.log(LogLevel.ERROR, getName() + ": Bad socket, stopping");
+            MCRPServer.log(LogLevel.ERROR, getName() + ": Bad socket, stopping");
             return;
         }
 
-        Main.log(LogLevel.VERBOSE, getName() + ": "
+        MCRPServer.log(LogLevel.VERBOSE, getName() + ": "
                 + sock.getInetAddress().toString() + " connected");
 
         try {
             sockIn = new BufferedInputStream(sock.getInputStream());
             sockOut = new BufferedOutputStream(sock.getOutputStream());
         } catch (IOException ex) {
-            Main.log(LogLevel.ERROR, getName() + ": IOException setting up "
+            MCRPServer.log(LogLevel.ERROR, getName() + ": IOException setting up "
                     + "streams: " + ex.getMessage());
         }
 
@@ -78,12 +78,12 @@ public class ClientSession extends Thread {
                     break;
                 }
             } catch (IOException ex) {
-                Main.log(LogLevel.ERROR, getName() + ": socket fail: "
+                MCRPServer.log(LogLevel.ERROR, getName() + ": socket fail: "
                         + ex.getMessage());
             }
         }
 
-        Main.log(LogLevel.VERBOSE, getName() + ": "
+        MCRPServer.log(LogLevel.VERBOSE, getName() + ": "
                 + sock.getInetAddress().toString() + " disconnected");
     }
 
