@@ -168,7 +168,8 @@ public class MCRPServer {
                 return false;
             }
             if (inputstream.readByte() > 2) {
-                MCRPServer.log(LogLevel.ERROR, "Level version > 2, failed to load");
+                MCRPServer.log(LogLevel.ERROR, "Level version > 2, failed to "
+                        + "load");
                 return false;
             }
             in = new ObjectInputStream(gzis);
@@ -187,6 +188,7 @@ public class MCRPServer {
             return false;
         }
         level.initTransient();
+        level.setNetworkMode(true);
 
         return true;
     }

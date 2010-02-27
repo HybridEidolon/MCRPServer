@@ -162,6 +162,14 @@ public class ClientSession extends Thread {
         }
     }
 
+
+    /**
+     * Sends the server identification info to the socket.
+     * @param playerid the player's unique identifier
+     * @param servername the name of the server
+     * @param servermotd the message of the day
+     * @param playertype the type of player, 0x00 for regular 0x64 for admin
+     */
     public synchronized void sendServerIdent(byte playerid, String servername,
             String servermotd, byte playertype) {
         ServerIdent pkt = new ServerIdent(playerid, servername, servermotd,
