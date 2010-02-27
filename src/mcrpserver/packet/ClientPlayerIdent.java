@@ -18,9 +18,6 @@
 package mcrpserver.packet;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 
 /**
  *
@@ -34,7 +31,6 @@ public class ClientPlayerIdent extends Packet {
     private byte unused;
 
     public ClientPlayerIdent(byte[] bfr) {
-        super(bfr);
         ByteBuffer pkt = ByteBuffer.wrap(bfr);
 
         this.version = pkt.get();

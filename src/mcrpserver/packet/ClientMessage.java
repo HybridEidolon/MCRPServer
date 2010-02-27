@@ -28,7 +28,6 @@ public class ClientMessage extends Packet {
     private String message; // Message
 
     public ClientMessage(byte[] bfr) {
-        super(bfr);
         ByteBuffer pkt = ByteBuffer.wrap(bfr);
 
         pkt.get();

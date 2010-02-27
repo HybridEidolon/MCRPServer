@@ -24,13 +24,6 @@ public class Packet {
 
     protected OpCode id;
 
-    public Packet() {
-        this.id.id = 0;
-    }
-    public Packet(byte[] bfr) {
-        this.id.id = bfr[0];
-    }
-
     public byte[] build() {
         byte[] returnvalue = new byte[1];
         returnvalue[0] = (byte)id.id;
