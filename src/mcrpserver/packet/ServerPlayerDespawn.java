@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package mcrpserver.packet;
 
 import java.nio.ByteBuffer;
@@ -43,8 +42,6 @@ public class ServerPlayerDespawn extends Packet {
 
         // put player id
         pkt.put(playerid);
-
-        pkt.put((byte) 0x0A);
 
         return pkt.array();
     }

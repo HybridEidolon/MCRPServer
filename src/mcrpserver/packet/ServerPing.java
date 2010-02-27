@@ -37,8 +37,6 @@ public class ServerPing extends Packet {
         // put id
         pkt.put((byte)id.id);
 
-        pkt.put((byte)0x0A);
-
         return pkt.array();
     }
 }

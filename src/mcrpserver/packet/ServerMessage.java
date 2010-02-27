@@ -38,7 +38,7 @@ public class ServerMessage extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        ByteBuffer pkt = ByteBuffer.allocate(66);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // insert id
@@ -60,8 +60,6 @@ public class ServerMessage extends Packet {
         byte[] fill = new byte[filler];
         Arrays.fill(fill, (byte)0x20);
         pkt.put(fill);
-
-        pkt.put((byte)0x0A);
 
         return pkt.array();
     }

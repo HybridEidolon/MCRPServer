@@ -31,13 +31,11 @@ public class ServerLevelInitialize extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(2);
+        ByteBuffer pkt = ByteBuffer.allocate(1);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
         pkt.put((byte)id.id);
-
-        pkt.put((byte)0x0A);
         
         return pkt.array();
     }

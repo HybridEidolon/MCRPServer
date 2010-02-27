@@ -38,7 +38,7 @@ public class ServerPlayerOrient extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        ByteBuffer pkt = ByteBuffer.allocate(4);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
@@ -50,8 +50,6 @@ public class ServerPlayerOrient extends Packet {
         // put heading, pitch
         pkt.put(headingdelta);
         pkt.put(pitchdelta);
-
-        pkt.put((byte) 0x0A);
 
         return pkt.array();
     }

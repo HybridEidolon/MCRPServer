@@ -46,7 +46,7 @@ public class MCRPServer {
     private static ServerSocket servSock;
     public static Properties config;
     private static boolean running = true;
-    private static com.mojang.minecraft.level.Level level = null;
+    public static com.mojang.minecraft.level.Level level = null;
     private static ArrayList<ClientSession> clients;
     private static int clientIncrement;
 

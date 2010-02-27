@@ -40,7 +40,7 @@ public class ServerPlayerPosition extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        ByteBuffer pkt = ByteBuffer.allocate(5);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
@@ -53,8 +53,6 @@ public class ServerPlayerPosition extends Packet {
         pkt.put(xdelta);
         pkt.put(ydelta);
         pkt.put(zdelta);
-
-        pkt.put((byte) 0x0A);
 
         return pkt.array();
     }

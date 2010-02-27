@@ -38,7 +38,7 @@ public class ServerLevelFinalize extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        ByteBuffer pkt = ByteBuffer.allocate(7);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
@@ -52,8 +52,6 @@ public class ServerLevelFinalize extends Packet {
 
         // put z size
         pkt.putShort(zsize);
-
-        pkt.put((byte)0x0A);
 
         return pkt.array();
     }

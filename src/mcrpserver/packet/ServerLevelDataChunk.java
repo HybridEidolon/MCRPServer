@@ -18,6 +18,7 @@ package mcrpserver.packet;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 /**
  *
@@ -38,7 +39,7 @@ public class ServerLevelDataChunk extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(2048);
+        ByteBuffer pkt = ByteBuffer.allocate(1028);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
@@ -48,12 +49,19 @@ public class ServerLevelDataChunk extends Packet {
         pkt.putShort(chunklength);
 
         // put chunkdata
-        pkt.put(chunkdata);
-
+        if (chunkdata.length < 1024) {
+            byte[] fill = new byte[1024-chunkdata.length];
+            Arrays.fill(fill, (byte)0x00);
+            pkt.put(chunkdata);
+            pkt.put(fill);
+        } else if (chunkdata.length == 1024) {
+            pkt.put(chunkdata);
+        } else {
+            return null;
+        }
+        
         // put percentcomplete
         pkt.put(percentcomplete);
-
-        pkt.put((byte)0x0A);
         
         return pkt.array();
     }

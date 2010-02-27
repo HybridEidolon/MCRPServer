@@ -35,7 +35,7 @@ public class ClientSession extends Thread {
     private boolean running = true;
     private BufferedInputStream sockIn;
     private BufferedOutputStream sockOut;
-    private User user;
+    public User user;
     private boolean[] playeridslist = new boolean[256];
 
     public ClientSession(Socket sock, String name) {
@@ -93,7 +93,10 @@ public class ClientSession extends Thread {
                             sendServerIdent(user.getID(),
                                     MCRPServer.config.getProperty("server.name",
                                     "default"),
-                                    user.getVerificationKey(),user.getType());
+                                    MCRPServer.config.getProperty("server.motd",
+                                    "default"),user.getType());
+                            // send the map
+                            new MapSendThread(this);
                         }
                     }
 
@@ -108,9 +111,11 @@ public class ClientSession extends Thread {
                     break;
                 }
             } catch (SocketException ex) {
+                running = false;
             } catch (IOException ex) {
                 MCRPServer.log(LogLevel.ERROR, getName() + ": socket fail: "
                         + ex.getMessage());
+                running = false;
             }
         }
 
@@ -157,7 +162,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerMessage: " + ex.getMessage());
         }
     }
@@ -179,7 +184,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerIdent: " + ex.getMessage());
         }
     }
@@ -192,7 +197,7 @@ public class ClientSession extends Thread {
             sockOut.write(new ServerPing().build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerPing: " + ex.getMessage());
         }
     }
@@ -205,21 +210,21 @@ public class ClientSession extends Thread {
             sockOut.write(new ServerLevelInitialize().build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerLevelInitialize: " + ex.getMessage());
         }
     }
 
-    public synchronized void sendServerLevelDataChunk(short length, byte[] data,
-            byte pct) {
-        ServerLevelDataChunk pkt = new ServerLevelDataChunk(length, data,
-                pct);
+    public synchronized void sendServerLevelDataChunk(short chunksize,
+            byte[] chunk, byte pctcompl) {
+        ServerLevelDataChunk pkt = new ServerLevelDataChunk(chunksize,
+                chunk, pctcompl);
         try {
             // send it
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerLevelDataChunk: " + ex.getMessage());
         }
     }
@@ -232,7 +237,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerLevelFinalize: " + ex.getMessage());
         }
     }
@@ -245,7 +250,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerSetBlock: " + ex.getMessage());
         }
     }
@@ -259,7 +264,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerPlayerSpawn: " + ex.getMessage());
         }
     }
@@ -273,7 +278,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerPlayerTeleport: " + ex.getMessage());
         }
     }
@@ -287,7 +292,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerPlayerPositionOrient: " + ex.getMessage());
         }
     }
@@ -300,7 +305,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerPlayerPosition: " + ex.getMessage());
         }
     }
@@ -313,7 +318,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerPlayerOrient: " + ex.getMessage());
         }
     }
@@ -325,7 +330,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerPlayerDespawn: " + ex.getMessage());
         }
     }
@@ -337,7 +342,7 @@ public class ClientSession extends Thread {
             sockOut.write(pkt.build());
             sockOut.flush();
         } catch (IOException ex) {
-            MCRPServer.log(LogLevel.ERROR, getName() + ": failed to send "
+            MCRPServer.log(LogLevel.VERBOSE, getName() + ": failed to send "
                     + "ServerPlayerDisconnect: " + ex.getMessage());
         }
     }

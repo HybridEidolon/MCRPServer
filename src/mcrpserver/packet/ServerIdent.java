@@ -43,7 +43,7 @@ public class ServerIdent extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        ByteBuffer pkt = ByteBuffer.allocate(131);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // insert id
@@ -81,8 +81,6 @@ public class ServerIdent extends Packet {
 
         // insert playertype
         pkt.put(playertype);
-
-        pkt.put((byte)0x0A);
         
         return pkt.array();
     }

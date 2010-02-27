@@ -45,7 +45,7 @@ public class ServerPlayerPositionOrient extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        ByteBuffer pkt = ByteBuffer.allocate(7);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
@@ -62,8 +62,6 @@ public class ServerPlayerPositionOrient extends Packet {
         // put heading, pitch
         pkt.put(heading);
         pkt.put(pitch);
-
-        pkt.put((byte) 0x0A);
 
         return pkt.array();
     }

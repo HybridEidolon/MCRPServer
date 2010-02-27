@@ -36,7 +36,7 @@ public class ServerPlayerDisconnect extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(66);
+        ByteBuffer pkt = ByteBuffer.allocate(65);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
@@ -51,8 +51,6 @@ public class ServerPlayerDisconnect extends Packet {
         }
         byte[] fill = new byte[64-msg.length];
         Arrays.fill(fill, (byte)0x20);
-
-        pkt.put((byte) 0x0A);
 
         return pkt.array();
     }

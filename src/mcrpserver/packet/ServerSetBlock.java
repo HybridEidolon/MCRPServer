@@ -40,7 +40,7 @@ public class ServerSetBlock extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(1024);
+        ByteBuffer pkt = ByteBuffer.allocate(8);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // put id
@@ -57,8 +57,6 @@ public class ServerSetBlock extends Packet {
 
         // put blocktype
         pkt.put(blocktype);
-
-        pkt.put((byte)0x0A);
 
         return pkt.array();
     }
