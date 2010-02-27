@@ -30,8 +30,13 @@ public class ClientMessage extends Packet {
     public ClientMessage(byte[] bfr) {
         ByteBuffer pkt = ByteBuffer.wrap(bfr);
 
+        // skip id
         pkt.get();
+
+        // get unused value
         unused = pkt.get();
+
+        // get chat message
         byte[] strbfr = new byte[64];
         pkt.get(strbfr);
         message = new String(strbfr);
