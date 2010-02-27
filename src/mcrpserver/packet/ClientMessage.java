@@ -19,6 +19,7 @@ package mcrpserver.packet;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 /**
  *
@@ -48,7 +49,7 @@ public class ClientMessage extends Packet {
 
     @Override
     public byte[] build() {
-        ByteBuffer pkt = ByteBuffer.allocate(66);
+        ByteBuffer pkt = ByteBuffer.allocate(128);
         pkt.order(ByteOrder.BIG_ENDIAN);
 
         // build up
@@ -57,6 +58,10 @@ public class ClientMessage extends Packet {
         // need to trim message to 64 bytes...
         String newmessage = message.substring(0,63);
         pkt.put(newmessage.getBytes(Charset.forName("UTF-8")));
+
+        byte[] blank = new byte[64-newmessage.length()];
+        Arrays.fill(blank, (byte)0x20);
+        pkt.put(blank);
 
         // done!
         return pkt.array();

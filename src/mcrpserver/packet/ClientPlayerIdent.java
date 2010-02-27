@@ -19,6 +19,7 @@ package mcrpserver.packet;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 /**
  *
@@ -60,8 +61,22 @@ public class ClientPlayerIdent extends Packet {
         // build up
         pkt.put((byte)id.id);
         pkt.put(version);
+        
+        // insert username
+        int filler = 64-username.getBytes().length;
         pkt.put(username.getBytes());
+        byte[] arrfill = new byte[filler];
+        Arrays.fill(arrfill, (byte)0x20);
+        pkt.put(arrfill);
+
+        // insert verification key
         pkt.put(verificationkey.getBytes());
+        filler = 64-verificationkey.getBytes().length;
+        arrfill = new byte[filler];
+        Arrays.fill(arrfill, (byte)0x20);
+        pkt.put(arrfill);
+
+        // unused byte
         pkt.put(unused);
 
         return pkt.array();
