@@ -32,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -108,11 +110,20 @@ public class MCRPServer {
     public static void main(String[] args) {
         MCRPServer.log(LogLevel.MINIMAL, "MCRPServer version " + MCRPServer.VERSION_MAJOR
                 + "." + MCRPServer.VERSION_MINOR);
+        MCRPServer.log(LogLevel.MINIMAL, "Loading mcrp.conf");
+        MCRPServer.loadConfig();
 
         MCRPServer.log(LogLevel.MINIMAL, "Loading level server_level.dat");
         MCRPServer.loadLevel("server_level.dat");
 
         MCRPServer.log(LogLevel.MINIMAL, "Starting server");
+        try {
+            servSock = new ServerSocket(Integer.valueOf(config.getProperty("network.port", "25565")));
+        } catch (IOException ex) {
+            log(LogLevel.ERROR, "IOException making server socket: "
+                    + ex.getMessage());
+            return;
+        }
         while (running) {
             try {
                 // Accept client connection
