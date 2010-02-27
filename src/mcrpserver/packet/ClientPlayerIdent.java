@@ -33,12 +33,22 @@ public class ClientPlayerIdent extends Packet {
     public ClientPlayerIdent(byte[] bfr) {
         ByteBuffer pkt = ByteBuffer.wrap(bfr);
 
+        // skip first byte id
+        pkt.get();
+
+        // get protocol version id
         this.version = pkt.get();
+
+        // get username
         byte[] strbfr = new byte[64];
         pkt.get(strbfr);
         username = new String(strbfr);
+
+        // get verificationkey
         pkt.get(strbfr);
         verificationkey = new String(strbfr);
+
+        // get unused byte
         unused = pkt.get();
     }
 
