@@ -19,6 +19,7 @@ package mcrpserver.packet;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -63,14 +64,14 @@ public class ClientPlayerIdent extends Packet {
         pkt.put(version);
         
         // insert username
-        int filler = 64-username.getBytes().length;
+        int filler = 64-username.getBytes(Charset.forName("UTF-8")).length;
         pkt.put(username.getBytes());
         byte[] arrfill = new byte[filler];
         Arrays.fill(arrfill, (byte)0x20);
         pkt.put(arrfill);
 
         // insert verification key
-        pkt.put(verificationkey.getBytes());
+        pkt.put(verificationkey.getBytes(Charset.forName("UTF-8")));
         filler = 64-verificationkey.getBytes().length;
         arrfill = new byte[filler];
         Arrays.fill(arrfill, (byte)0x20);
