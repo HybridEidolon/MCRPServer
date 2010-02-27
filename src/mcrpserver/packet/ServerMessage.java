@@ -48,7 +48,13 @@ public class ServerMessage extends Packet {
         pkt.put(playerid);
 
         // insert message
-        byte[] msg = message.getBytes(Charset.forName("US-ASCII"));
+        byte[] msg;
+        try {
+            msg = message.substring(0, 63)
+                    .getBytes(Charset.forName("US-ASCII"));
+        } catch (StringIndexOutOfBoundsException ex) {
+            msg = message.getBytes(Charset.forName("US-ASCII"));
+        }
         int filler = 64-msg.length;
         pkt.put(msg);
         byte[] fill = new byte[filler];

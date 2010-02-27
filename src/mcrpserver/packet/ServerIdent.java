@@ -53,8 +53,13 @@ public class ServerIdent extends Packet {
         pkt.put(version);
 
         // insert servername
-        byte[] msg = servername.substring(0, 63)
-                .getBytes(Charset.forName("US-ASCII"));
+        byte[] msg;
+        try {
+            msg = servername.substring(0, 63)
+                    .getBytes(Charset.forName("US-ASCII"));
+        } catch (StringIndexOutOfBoundsException ex) {
+            msg = servername.getBytes(Charset.forName("US-ASCII"));
+        }
         int filler = 64-msg.length;
         byte[] fill = new byte[filler];
         Arrays.fill(fill, (byte)0x20);
@@ -62,8 +67,12 @@ public class ServerIdent extends Packet {
         pkt.put(fill);
 
         // insert servermotd
-        msg = servermotd.substring(0, 63)
-                .getBytes(Charset.forName("US_ASCII"));
+        try {
+            msg = servermotd.substring(0, 63)
+                    .getBytes(Charset.forName("US-ASCII"));
+        } catch (StringIndexOutOfBoundsException ex) {
+            msg = servermotd.getBytes(Charset.forName("US-ASCII"));
+        }
         filler = 64-msg.length;
         fill = new byte[filler];
         Arrays.fill(fill, (byte)0x20);
