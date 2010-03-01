@@ -19,7 +19,6 @@ package mcrpserver;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
 
@@ -42,62 +41,53 @@ public class LevelSendThread extends Thread {
         cls.sendServerLevelInitialize();
         MCRPServer.log(LogLevel.DEBUG, "Sent level init");
 
-        // send the level
-        MCRPServer.log(LogLevel.DEBUG, "Sending level");
-        byte[] level;
+        // gzip level
+        ByteArrayOutputStream baos;
+        GZIPOutputStream gzos;
+        DataOutputStream daos;
+        byte[] level = null;
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            GZIPOutputStream gzos = new GZIPOutputStream(baos);
-            DataOutputStream out = new DataOutputStream(gzos);
-            out.writeInt(MCRPServer.level.blocks.length);
-            out.write(MCRPServer.level.blocks);
-            out.flush();
+            daos = new DataOutputStream((gzos = new GZIPOutputStream(
+                    (baos = new ByteArrayOutputStream()))));
+            daos.writeInt(MCRPServer.level.blocks.length);
+            daos.write(MCRPServer.level.blocks);
+            daos.close();
             gzos.close();
-            out.close();
             level = baos.toByteArray();
-            baos.close();
         } catch (IOException ex) {
             return;
         }
-        ArrayList<byte[]> chunks = new ArrayList<byte[]>();
-        int num = 0;
-        boolean done = false;
-        try {
-            while (!done) {
-                chunks.add(num,Arrays.copyOfRange(level, 1024*num,
-                        (1024*(num+1))-1));
-                num++;
-            }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            done = true;
-        }
 
-        int pos = 0;
-        try {
-            for (int i=0; pos<=num; i++) {
-                if (chunks.get(i) != null) {
-                    byte[] chunk = chunks.get(i);
-                    pos++;
-                    MCRPServer.log(LogLevel.DEBUG, "Send chunk: "
-                            + (pos/num)*100 + "%");
-                    cls.sendServerLevelDataChunk((short)chunk.length, chunk,
-                            (byte)Math.round((pos/num)*100));
-                    chunks.remove(i);
-                }
-            }
-        } catch (IndexOutOfBoundsException ex) {
+        // send level
+        int sent = 0;
+        int total = level.length;
+        int left = 0;
+        short chunksize = 0;
+        while(sent < total) {
+            left = total - sent;
+            chunksize = (left < 1024 ? (short) left : 1024);
+
+            MCRPServer.log(LogLevel.DEBUG, "Sending level chunk size "
+                    + chunksize + ", " + sent + "/" + total);
+            cls.sendServerLevelDataChunk(chunksize, Arrays.copyOfRange(
+                    level, sent, sent+chunksize), (byte) ((sent * 100)/total));
+            sent += chunksize;
         }
 
         // send finalize
+        MCRPServer.log(LogLevel.DEBUG, "D: " + MCRPServer.level.width + "x"
+                + MCRPServer.level.depth + "x" + MCRPServer.level.height);
+        MCRPServer.log(LogLevel.DEBUG, "Total: " + MCRPServer.level.width*
+                MCRPServer.level.depth*MCRPServer.level.height);
+        MCRPServer.log(LogLevel.DEBUG, "Size: "
+                + MCRPServer.level.blocks.length);
         cls.sendServerLevelFinalize((short)MCRPServer.level.width,
-                (short)MCRPServer.level.height, (short)MCRPServer.level.depth);
-        MCRPServer.log(LogLevel.DEBUG, "Sent finalize");
+                (short)MCRPServer.level.depth, (short)MCRPServer.level.height);
 
         // send spawn
         cls.sendServerPlayerSpawn(cls.user.getID(), cls.user.getUsername(),
                 (short)MCRPServer.level.xSpawn, (short)MCRPServer.level.ySpawn,
                 (short)MCRPServer.level.zSpawn, (byte)MCRPServer.level.rotSpawn,
                 (byte)0);
-        MCRPServer.log(LogLevel.DEBUG, "Player spawned");
     }
 }

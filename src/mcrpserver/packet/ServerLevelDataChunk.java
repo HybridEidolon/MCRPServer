@@ -49,16 +49,7 @@ public class ServerLevelDataChunk extends Packet {
         pkt.putShort(chunklength);
 
         // put chunkdata
-        if (chunkdata.length < 1024) {
-            byte[] fill = new byte[1024-chunkdata.length];
-            Arrays.fill(fill, (byte)0x00);
-            pkt.put(chunkdata);
-            pkt.put(fill);
-        } else if (chunkdata.length == 1024) {
-            pkt.put(chunkdata);
-        } else {
-            return null;
-        }
+        pkt.put(Arrays.copyOf(chunkdata, 1024));
         
         // put percentcomplete
         pkt.put(percentcomplete);

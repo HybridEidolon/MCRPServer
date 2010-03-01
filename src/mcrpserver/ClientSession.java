@@ -81,6 +81,7 @@ public class ClientSession extends Thread {
                                 break;
                             }
                         }
+                        playeridslist[i] = true;
 
                         // tell other players of their existance
                         user = new User((byte) i, pkt2.getUsername(),
@@ -143,6 +144,12 @@ public class ClientSession extends Thread {
         }
         if (id == OpCode.CLIENT_MESSAGE.id) {
             returnvalue = new ClientMessage(bfr);
+        }
+        if (id == OpCode.CLIENT_SET_BLOCK.id) {
+            returnvalue = new ClientSetBlock(bfr);
+        }
+        if (id == OpCode.CLIENT_SET_POSITION.id) {
+            returnvalue = new ClientPositionOrientation(bfr);
         }
         return returnvalue;
     }
