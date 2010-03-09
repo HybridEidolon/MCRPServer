@@ -16,6 +16,7 @@
  */
 package mcrpserver;
 
+import mcrpserver.util.LogLevel;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

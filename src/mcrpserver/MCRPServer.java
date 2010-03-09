@@ -16,6 +16,7 @@
  */
 package mcrpserver;
 
+import mcrpserver.util.LogLevel;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
