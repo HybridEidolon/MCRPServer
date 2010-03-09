@@ -77,7 +77,7 @@ public class MCRPServer {
             config.load(conffile);
         } catch (FileNotFoundException ex) {
             // Generate a default config
-            log(LogLevel.MINIMAL, "jbnet2d.conf not found, generating...");
+            log(LogLevel.MINIMAL, "mcrpserver.conf not found, generating...");
             config.setProperty("network.port", "25565");
             config.setProperty("server.name", "Default MCRP Server");
             config.setProperty("server.motd", "Default MOTD");
@@ -118,7 +118,13 @@ public class MCRPServer {
         }
         leveltick = new LevelTickThread();
 
-        MCRPServer.log(LogLevel.MINIMAL, "Starting server");
+        MCRPServer.log(LogLevel.MINIMAL, "Starting MCRP server");
+        //bad a** ascii logo with escapes for the escapes.
+        System.out.println("/ \\__/|/   _\\/  __\\/  __\\/ ___\\/  __//  __\\/ \\ |\\/  __//  __\\" + "\n"
+                                +"| |\\/|||  /  |  \\/||  \\/||    \\|  \\  |  \\/|| | //|  \\  |  \\/|" + "\n"
+                                +"| |  |||  \\__|    /|  __/\\___ ||  /_ |    /| \\// |  /_ |    /" + "\n"
+                                +"\\_/  \\|\\____/\\_/\\_\\ \\_/  \\____/ \\____\\_/\\_\\__/  \\____\\_/\\_/\\_\\" +
+                                + MCRPServer.VERSION_MAJOR + "." + MCRPServer.VERSION_MINOR );
         try {
             servSock = new ServerSocket(Integer.valueOf(config.getProperty("network.port", "25565")));
         } catch (IOException ex) {
@@ -182,8 +188,8 @@ public class MCRPServer {
                     + ex.getMessage());
             return false;
         } catch (ClassNotFoundException ex) {
-            MCRPServer.log(LogLevel.ERROR, "minecraft_server.jar is not in the"
-                    + "lib dir.");
+            MCRPServer.log(LogLevel.ERROR, "minecraft-server.jar is not in the"
+                    + "  lib dir.");
             end();
             return false;
         }
