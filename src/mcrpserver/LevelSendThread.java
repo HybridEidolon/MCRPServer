@@ -42,17 +42,14 @@ public class LevelSendThread extends Thread {
         MCRPServer.log(LogLevel.DEBUG, "Sent level init");
 
         // gzip level
-        ByteArrayOutputStream baos;
-        GZIPOutputStream gzos;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream daos;
         byte[] level = null;
         try {
-            daos = new DataOutputStream((gzos = new GZIPOutputStream(
-                    (baos = new ByteArrayOutputStream()))));
+            daos = new DataOutputStream(new GZIPOutputStream(baos));
             daos.writeInt(MCRPServer.level.blocks.length);
-            daos.write(MCRPServer.level.blocks);
+            daos.write(MCRPServer.level.copyBlocks());
             daos.close();
-            gzos.close();
             level = baos.toByteArray();
         } catch (IOException ex) {
             return;
@@ -66,9 +63,6 @@ public class LevelSendThread extends Thread {
         while(sent < total) {
             left = total - sent;
             chunksize = (left < 1024 ? (short) left : 1024);
-
-            MCRPServer.log(LogLevel.DEBUG, "Sending level chunk size "
-                    + chunksize + ", " + sent + "/" + total);
             cls.sendServerLevelDataChunk(chunksize, Arrays.copyOf(level,
                     chunksize), (byte) ((sent * 100)/total));
             level = Arrays.copyOfRange(level, chunksize, level.length);
