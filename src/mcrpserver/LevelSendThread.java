@@ -69,8 +69,9 @@ public class LevelSendThread extends Thread {
 
             MCRPServer.log(LogLevel.DEBUG, "Sending level chunk size "
                     + chunksize + ", " + sent + "/" + total);
-            cls.sendServerLevelDataChunk(chunksize, Arrays.copyOfRange(
-                    level, sent, sent+chunksize), (byte) ((sent * 100)/total));
+            cls.sendServerLevelDataChunk(chunksize, Arrays.copyOf(level,
+                    chunksize), (byte) ((sent * 100)/total));
+            level = Arrays.copyOfRange(level, chunksize, level.length);
             sent += chunksize;
         }
 
